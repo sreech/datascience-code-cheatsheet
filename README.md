@@ -212,6 +212,27 @@ df_test['predicted_probability'] = preds
 # test for 'predicted_probability > 0.5, if yes assign will_default to 1, otherwise to 0
 df_test['will_default'] = np.where(df_test['predicted_probability']>0.5, 1, 0)
 ```
+# Naive Bayes Multinomial MultiClass Logistic Regression
+```
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import classification_report
+documents = [("The team won the championship. What a victory!", "sports"),("New technology breakthrough announced.")]
+X, y = zip(*documents)
+# Vectorize the text data
+vectorizer = CountVectorizer()
+X = vectorizer.fit_transform(X)
+# Create and train the Multinomial Naive Bayes classifier
+clf = MultinomialNB()
+clf.fit(X, y)
+# Example documents for prediction
+new_documents = ["The team won cricket.","iphone smartphone just released."]
+# Vectorize the new documents
+X_new = vectorizer.transform(new_documents)
+# Make predictions
+predicted_categories = clf.predict(X_new)
+print(classification_report(true_labels, predicted_categories))
+```
 # ConfusionMatrix:
 Evaluate performance of classification model by summarizing the counts of true positive, true negative, false positive, and false negative predictions made by the model on a test dataset.
 ```
