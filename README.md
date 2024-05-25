@@ -328,6 +328,16 @@ Activation function: non linear functions (sigmoid) used inside each neuron incl
 Input layer (inputs or variables with no transformations), output layer (final output from previuos of network procedures, sigmoid), rest is hidden layer
 Dense or fully connected layer: layer with stack of neurons and numbers fed into every neuron in next layer
 Deep neural network/deep learning: is a neural network with lots of hidden layers [number of layers is called depth of network] RESNET34
+Activation Functions:
+Sigmoid Activation Function:  1/1+e^-x (produces probability between 0 and 1)
+Linear Activation Function: Function that takes input and passes it along unchanged
+**Rectified Linear unit (ReLU): g(a)=max(0,a) [receives number, check if its positive then send unchanged, if negative then send 0]. It address vanishing gradient problem (if gradients become too small in large NN, then they fail provide meaningful updates to NN params leading to steady learning)
+Output Varaible							Output Layer				   Loss Function
+Single number(regression with single input) 		-->   Linear Activation function  -->		Mean squared error
+Single probability (binary classification)  		-->   Sigmoid function	 	  -->		Binary cross entropy
+Vector of n numbers (reg. with multiple o/p)		-->   Stack of linear activations -->		Mean squared error
+Vector of n probs that add upto 1 (multiclass class)	-->   Softmax layer		  -->		Categorical cross entropy
+
 ```
 ```
 import tensorflow as tf
@@ -418,3 +428,32 @@ h = keras.layers.Flatten()(input)   #rest is same with dense and output
 # Apply dropout to 50% of the neurons
 h = keras.layers.Dropout(0.5)(h)
 ```
+### Loss Function, Gradient Descent, Stochastic GD, Regularization, Tensor, TensorFlow, Keras
+```
+Loss Function: Function that quantifies the error in a model's prediction and can be thought as error function (similar to Sum of squared errors in LR). Loss function tells the diff between predicted and actual. Lower the loss function, better the model. 
+
+Gradient Descent: Start with a point, calculate derivative and then keep going until you find derivative that is closest to zero use a small value for alpha. New Point = current point - alpha*derivative    (repeat until derivative is closer to 0). Optimization alogrithm uses calculus to reduce loss function by calculating loss, then compute gradients of loss function by initially starting off with initial set of params (weights/bias) then using backpropagation to minimize loss function
+
+Stochastic Gradient Descent: mini batch gradient descent makes it possible to work with extremely large datasets
+Backpropagation: calculate gradient at output and update moving backwards from output to input (efficient organization of computation of gradient)
+
+Regularization: technique to reduce overfitting/underfitting 
+	Early stopping: stopping the training process when error on validation set flattens out or begins to increase
+	Drop out: removing (dropping) a number of neurons randomly in each layer
+
+Tensor: Tensor is a notion where single number like 6 has a tensor rank of 0, vector like series of numbers (43,3.5,34) has a vector rank of 1, a table with rows and columns has a tensor rank of 2, cube wit row,columns and depth has tensor rank of 3 and video clip containing frames, each frame being a cube, had 4 dimensions or 4 tensor rank
+
+Tensor Flow: Its a library with numerous built in functions to manipulate and transform tensors. Automatic calcuation of gradient of complicated loss functions to minimize these loss functions. It provides state of art optimizers like SGD(stochastic Gradient descent) and its variants or siblings like ADAM
+
+KERAS: Keras can harness all abilities of TF and provide more user-friendly concepts. Provides library of Activation functions, layers and flexible way to specify neural network architecture. It provides easy way to preprocess data, easy ways to train models and report metrics, easy access to pretrained models that u can download and customize
+```
+# NLP
+### Unigram Multi-hot Encoding Baseline VECTORIZATION
+```
+max_tokens = 2412
+text_vectorization = keras.layers.TextVectorization(max_tokens=max_tokens,output_mode="multi_hot")
+text_vectorization.adapt(X_train)
+X_train=text_vectorization(X_train)
+X_test=text_vectorization(X_test)
+#Now create your model. start with 32 dense relu layers, a dropout layer of 0.5, and a final softmax layer and compile like regular NN model
+model.fit(x=X_train, y=y_train, validation_data=(X_test, y_test),  epochs=10, batch_size=32)
