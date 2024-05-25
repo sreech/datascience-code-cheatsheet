@@ -360,3 +360,61 @@ history = model.fit(X_train, y_train,epochs=100,batch_size=32,validation_split=0
 ### Evaluate Model
 score, acc = model.evaluate(X_test, y_test)
 ```
+
+# Basic CNN with two convolutional + pooling layers
+```
+# 1st convolutional block
+h = keras.layers.Conv2D(32, kernel_size=(2, 2), activation="relu", name="Conv_1")(h) 
+# pooling layer
+h = keras.layers.MaxPool2D()(h) 
+# 2nd convolutional block
+h = keras.layers.Conv2D(32, kernel_size=(2, 2), activation="relu", name="Conv_2")(h) 
+# pooling layer
+h = keras.layers.MaxPool2D()(h) 
+h = keras.layers.Flatten()(h)   
+output = keras.layers.Dense(1, activation="sigmoid")(h)
+model = keras.Model(input, output)
+# optimizer
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+```
+### Data Augmentation 
+```
+data_augmentation = keras.Sequential([
+        keras.layers.RandomFlip("horizontal"),
+        keras.layers.RandomRotation(0.1),
+        keras.layers.RandomZoom(0.2),
+    ]
+)
+```
+### Rerun the model with Data Augmentation
+```
+input = keras.Input(shape=(224,224,3))
+# we have inserted the data augmentation layer here
+h = data_augmentation(input)
+# rest of the model is the same as above
+```
+### Model Built with Transfer Learning
+```
+resnet50_base = keras.applications.ResNet50(
+  weights='imagenet',
+  include_top=False,
+  input_shape=(224, 224, 3))
+
+def get_features_and_labels(dataset):
+  all_features = []
+  all_labels = []
+  for images, labels in dataset:
+    preprocessed_images = keras.applications.resnet50.preprocess_input(images)
+    features = resnet50_base.predict(preprocessed_images)
+    all_features.append(features)
+    all_labels.append(labels)
+  return np.concatenate(all_features), np.concatenate(all_labels)
+train_features, train_labels =  get_features_and_labels(train_dataset)
+train_features.shape  #(98, 7, 7, 2048)
+# This is the "smart" input from headless ResNet
+input = keras.Input(shape=(7, 7, 2048)) 
+# We flatten it into a vector
+h = keras.layers.Flatten()(input)   #rest is same with dense and output
+# Apply dropout to 50% of the neurons
+h = keras.layers.Dropout(0.5)(h)
+```
