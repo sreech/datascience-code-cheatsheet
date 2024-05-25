@@ -314,3 +314,42 @@ rcv.fit(train, y_train)
 rcv.best_params_
 y_pred = rcv.best_estimator_.predict(test)
 ```
+# Neural Network
+```coefficients = weights, intercepts = biases
+Execute Logistic regression by combining intercept (adding biases) + coefficient of variable 1 to n(multipying inputs with weights), then running through sigmoid function to determine probability 1/1+e^-x
+Transform k-dimensional input into n dimensional vector output using linear function and then feed into nonlinear (like sigmoid). Ater n transformations, you then feed into logistic regresssion function
+Use linear and non linear functions repeatedly between outputs and inputs so that there are transformations, to smartly represent unstructured data
+```
+```
+Neural network: Insert logistic or linear regression into linear functions, followed by non linear functions
+Neurons: operations that involve linear function and receive inputs, add them up and send them thro non-linear functions, One neuron connected to another neuron within a network of connections
+Layer: Vertical stack of neurons
+Activation function: non linear functions (sigmoid) used inside each neuron including output
+Input layer (inputs or variables with no transformations), output layer (final output from previuos of network procedures, sigmoid), rest is hidden layer
+Dense or fully connected layer: layer with stack of neurons and numbers fed into every neuron in next layer
+Deep neural network/deep learning: is a neural network with lots of hidden layers [number of layers is called depth of network] RESNET34
+```
+```
+import tensorflow as tf
+from tensorflow import keras
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(df, y, test_size=0.2, stratify=y)
+### Define model in Keras
+#Creating an NN  is usually just a few lines of Keras code. , We will start with a single hidden layer. 
+#Since this is a *binary classification problem*, we will use a sigmoid activation in the output layer.
+#get the number of columns and assign it to "num_columns"
+num_columns = X_train.shape[1]
+# Define the input layer. assign it to "input"
+input = keras.Input(shape=num_columns)
+# Feed the input vector to the hidden layer. Call it "h"
+h = keras.layers.Dense(16, activation="relu", name="Hidden")(input)
+# Feed the output of the hidden layer to the output layer. Call it "output"
+output = keras.layers.Dense(1, activation="sigmoid", name="Output")(h)
+# tell Keras that this (input,output) pair is your model. Call it "model"
+model = keras.Model(input, output)
+### Set Optimization Parameters
+model.compile(optimizer="adam",loss="binary_crossentropy",metrics=["accuracy"])
+### Train the Model with fit
+history = model.fit(X_train, y_train,epochs=100,batch_size=32,validation_split=0.2)
+### Evaluate Model
+score, acc = model.evaluate(X_test, y_test)
