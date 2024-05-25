@@ -457,3 +457,10 @@ X_train=text_vectorization(X_train)
 X_test=text_vectorization(X_test)
 #Now create your model. start with 32 dense relu layers, a dropout layer of 0.5, and a final softmax layer and compile like regular NN model
 model.fit(x=X_train, y=y_train, validation_data=(X_test, y_test),  epochs=10, batch_size=32)
+```
+### Convert Raw to be predicted data into tensor to test it out
+```
+raw_text_data = tf.convert_to_tensor([["This movie was bad"],])
+vect_data = text_vectorization(raw_text_data)
+predictions = model.predict(vect_data)
+```
