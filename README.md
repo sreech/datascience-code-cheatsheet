@@ -476,3 +476,38 @@ model = gensim.downloader.load("glove-wiki-gigaword-50")
 model.most_similar("cold", topn=20) #word similarity
 model.similarity("good", "bad")
 ```
+# Transformers
+### Attention Mechanism with Context Aware
+```
+Max pooling in convnets looks at a pool of features in a spatial region and selects just one feature to keep. That’s an “all or nothing” form of attention: keep the most important feature and discard the rest.
+TF-IDF normalization assigns importance scores to tokens based on how much information different tokens are likely to carry. Important tokens get boosted while irrelevant tokens get faded out. That’s a continuous form of attention.
+There are many different forms of attention you could imagine, but they all start by computing importance scores for a set of features, with higher scores for more relevant features and lower scores for less relevant ones.
+
+Step 1 is to compute relevancy scores between the vector for “station” and every other word in the sentence. These are our “attention scores
+Step 2 is to compute the sum of all word vectors in the sentence, weighted by our relevancy scores. Words closely related to “station” will contribute more to the sum (including the word “station” itself), while irrelevant words will contribute almost nothing.
+You’d repeat this process for every word in the sentence, producing a new sequence of vectors encoding the sentence.
+```
+```
+# Textvec of slots
+text_vectorization_slots = keras.layers.TextVectorization(output_sequence_length=max_query_length, standardize=None)
+text_vectorization_slots.adapt(slot_data_train)
+# Params
+embedding_dim = 512
+encoder_units = 64
+units = 128
+num_heads = 5
+# Embedding and Masking
+inputs = keras.Input(shape=(max_query_length,))
+embedding = PositionalEmbedding(max_query_length, query_vocab_size, embedding_dim)
+x = embedding(inputs)
+# Transformer Encoding
+encoder_out = TransformerEncoder(embedding_dim, encoder_units, num_heads)(x)
+# Classifier
+x = keras.layers.Dense(units, activation='relu')(encoder_out)
+x = keras.layers.Dropout(0.5)(x)
+outputs = keras.layers.Dense(slot_vocab_size, activation="softmax")(x)
+model = keras.Model(inputs, outputs)
+model.compile(optimizer="adam",loss="sparse_categorical_crossentropy", metrics=["sparse_categorical_accuracy"])
+history = model.fit(source_train, target_train, batch_size=BATCH_SIZE, epochs=epochs)
+```
+
