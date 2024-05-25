@@ -510,4 +510,11 @@ model = keras.Model(inputs, outputs)
 model.compile(optimizer="adam",loss="sparse_categorical_crossentropy", metrics=["sparse_categorical_accuracy"])
 history = model.fit(source_train, target_train, batch_size=BATCH_SIZE, epochs=epochs)
 ```
+# Explainability and Causality with Integrated Gradients
+IG has become a popular interpretability technique due to its broad applicability to any differentiable model (e.g. images, text, structured data)
+### Calculate Integrated Gradients and Interpolate Images
+```
+calculate the gradients to measure the relationship between changes to a feature and changes in the model's predictions. In the case of images, the gradient tells us which pixels have the strongest effect on the model's predicted class probabilities.
+Generate a linear interpolation between the baseline and the original image. You can think of interpolated images as small steps in the feature space between your baseline and input, represented by  α  in the original equation.
+```
 
