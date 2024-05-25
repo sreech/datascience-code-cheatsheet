@@ -448,8 +448,12 @@ Tensor Flow: Its a library with numerous built in functions to manipulate and tr
 KERAS: Keras can harness all abilities of TF and provide more user-friendly concepts. Provides library of Activation functions, layers and flexible way to specify neural network architecture. It provides easy way to preprocess data, easy ways to train models and report metrics, easy access to pretrained models that u can download and customize
 ```
 # NLP
-### Unigram Multi-hot Encoding Baseline VECTORIZATION
+### Vectorization Baics  STIE process - Standardize, Tokenize, Index, Encode 
 ```
+#  default tokenization at a word level, by setting split='whitespace', default standarization which will remove punctuation and covert to lowercase.
+# output mode to int to indicate that we stop with just the index and not do any encoding for the moment
+text_vectorization = keras.layers.TextVectorization(output_mode = 'int',standardize='lower_and_strip_punctuation',split='whitespace')
+### Unigram Multi-hot Encoding Baseline VECTORIZATION
 max_tokens = 2412
 text_vectorization = keras.layers.TextVectorization(max_tokens=max_tokens,output_mode="multi_hot")
 text_vectorization.adapt(X_train)
@@ -463,4 +467,12 @@ model.fit(x=X_train, y=y_train, validation_data=(X_test, y_test),  epochs=10, ba
 raw_text_data = tf.convert_to_tensor([["This movie was bad"],])
 vect_data = text_vectorization(raw_text_data)
 predictions = model.predict(vect_data)
+```
+### Word Embeddings pre-trained model from the library Gensim GLOVE pretrained word embedding
+```
+import gensim
+import gensim.downloader
+model = gensim.downloader.load("glove-wiki-gigaword-50")
+model.most_similar("cold", topn=20) #word similarity
+model.similarity("good", "bad")
 ```
