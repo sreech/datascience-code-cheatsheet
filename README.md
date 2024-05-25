@@ -334,12 +334,16 @@ import tensorflow as tf
 from tensorflow import keras
 from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(df, y, test_size=0.2, stratify=y)
+```
 ### Define model in Keras
+```
 #Creating an NN  is usually just a few lines of Keras code. , We will start with a single hidden layer. 
 #Since this is a *binary classification problem*, we will use a sigmoid activation in the output layer.
 #get the number of columns and assign it to "num_columns"
 num_columns = X_train.shape[1]
-# Define the input layer. assign it to "input"
+```
+### Define the input layer. assign it to "input"
+```
 input = keras.Input(shape=num_columns)
 # Feed the input vector to the hidden layer. Call it "h"
 h = keras.layers.Dense(16, activation="relu", name="Hidden")(input)
@@ -347,9 +351,12 @@ h = keras.layers.Dense(16, activation="relu", name="Hidden")(input)
 output = keras.layers.Dense(1, activation="sigmoid", name="Output")(h)
 # tell Keras that this (input,output) pair is your model. Call it "model"
 model = keras.Model(input, output)
+```
 ### Set Optimization Parameters
+```
 model.compile(optimizer="adam",loss="binary_crossentropy",metrics=["accuracy"])
 ### Train the Model with fit
 history = model.fit(X_train, y_train,epochs=100,batch_size=32,validation_split=0.2)
 ### Evaluate Model
 score, acc = model.evaluate(X_test, y_test)
+```
